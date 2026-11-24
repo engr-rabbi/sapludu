@@ -1,4 +1,5 @@
 """PWA checks in headless Chromium: manifest + installability (CDP), service worker, offline reload, install bar."""
+import os
 import sys, time, json
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fake_google import install

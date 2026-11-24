@@ -1,5 +1,6 @@
 """Drives the production static build in two headless browsers (desktop + Android-sized phone):
 sign in with (fake) Google → create room → join by code → ready → start → play to the end → check results."""
+import os
 import re, sys, time, json, urllib.request
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fake_google import install

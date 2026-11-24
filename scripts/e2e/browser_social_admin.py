@@ -1,4 +1,5 @@
 """Profile edit, friends by code, live invitation toast → join, leaderboard, and admin authorisation, through the UI."""
+import os
 import re, sys, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fake_google import install
