@@ -62,7 +62,7 @@ class MockSheet {
   setFrozenRows() {}
 }
 
-export function createEnv(props = {}) {
+export function createEnv(props = {}, opts = {}) {
   let clock = Date.parse('2026-11-22T10:00:00Z');
   const sheets = new Map();
   const properties = new Map(Object.entries({
@@ -94,7 +94,12 @@ export function createEnv(props = {}) {
   const sandbox = {
     console: { log() {}, error() {}, warn() {} },
     Logger: { log() {} },
-    SpreadsheetApp: { getActiveSpreadsheet: () => ss, openById: () => ss, getUi: () => { throw new Error('no ui'); } },
+    SpreadsheetApp: {
+      getActiveSpreadsheet: () => (opts.standalone ? null : ss),
+      openById: (id) => { if (opts.standalone && id !== 'created-id') throw new Error('not found'); return ss; },
+      create: () => { env.created = true; return { getId: () => 'created-id', getUrl: () => 'https://docs.google.com/spreadsheets/d/created-id', ...ss }; },
+      getUi: () => { throw new Error('no ui'); }
+    },
     LockService: {
       getScriptLock: () => ({
         waitLock() {

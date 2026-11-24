@@ -47,6 +47,21 @@ test('requests fail clearly when the database was never initialised', () => {
   assert.equal(r.error.code, 'DB_NOT_INITIALISED');
 });
 
+test('standalone script (not bound to a sheet): setup() creates the spreadsheet and remembers it', () => {
+  const env = createEnv({}, { standalone: true });
+  // before setup, requests fail with a clear message instead of guessing
+  assert.equal(env.call('auth.login', { idToken: googleToken() }).error.code, 'DB_UNAVAILABLE');
+  const r = env.ctx.setup();
+  assert.equal(env.created, true);
+  assert.equal(env.properties.get('SPREADSHEET_ID'), 'created-id');
+  assert.match(r.spreadsheet, /spreadsheets\/d\/created-id/);
+  assert.equal(r.problems.length, 0);
+  assert.equal(env.call('auth.login', { idToken: googleToken() }).ok, true, 'works afterwards');
+  env.created = false;
+  env.ctx.setup(); // second run reuses the stored id
+  assert.equal(env.created, false);
+});
+
 // ───────────────────────── Google authentication ─────────────────────────
 
 test('first login registers the user, returning login reuses the account', () => {

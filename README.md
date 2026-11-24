@@ -98,7 +98,7 @@ sapludu/
 ## 3. Google Apps Script + Google Sheets backend
 
 1. Create a new **Google Sheet** (e.g. “Sapludu database”). Use a dedicated Google account if you can — the script runs *as you*.
-2. In the sheet: **Extensions → Apps Script**. This creates a script *bound* to the spreadsheet (no `SPREADSHEET_ID` needed).
+2. In the sheet: **Extensions → Apps Script**. This creates a script *bound* to the spreadsheet (no `SPREADSHEET_ID` needed). *(If you created the project at script.google.com instead — a standalone script — `setup()` creates a spreadsheet named “Sapludu database” for you, stores its id in the `SPREADSHEET_ID` property and logs its URL; or set `SPREADSHEET_ID` yourself to use an existing sheet.)*
 3. **Project Settings (⚙) → tick “Show `appsscript.json` manifest file in editor”**, then replace the manifest content with
    [`apps-script/appsscript.json`](apps-script/appsscript.json).
 4. Create one script file per `.gs` file in [`apps-script/`](apps-script/) (`Config`, `Util`, `Db`, `Auth`, `Users`, `Games`,
@@ -209,7 +209,7 @@ Do these once after deploying; the automated suites cannot sign in to a real Goo
 
 ## 7. Install as an app (PWA)
 
-The green **“Download for Your Mobile”** bar sits at the very top of the site and disappears once the app is installed.
+On phones a large **“Download for Your Mobile”** button sits in the home-page hero, just above the headline; on tablets and desktops a slim green bar at the very top of the site does the same. Both disappear once the app is installed.
 
 | Platform | How |
 |---|---|

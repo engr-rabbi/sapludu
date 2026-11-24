@@ -3,6 +3,7 @@
  */
 
 function setup() {
+  var dbInfo = ensureSpreadsheet_();
   var report = ensureSchema_();
   var cfg = config_();
   var problems = [];
@@ -10,9 +11,33 @@ function setup() {
   if (!cfg.serverSecret || cfg.serverSecret.length < 24) problems.push('SERVER_SECRET is missing or shorter than 24 characters (run generateServerSecret())');
   if (cfg.adminEmails.length === 0) problems.push('ADMIN_EMAILS is empty — nobody will be able to open the admin dashboard');
   installTriggers_();
+  Logger.log('Spreadsheet: ' + dbInfo.url + (dbInfo.created ? '  (created just now and saved as SPREADSHEET_ID)' : ''));
   Logger.log('Database ready: ' + JSON.stringify(report));
   Logger.log(problems.length ? 'ACTION NEEDED:\n - ' + problems.join('\n - ') : 'Configuration looks complete.');
-  return { schema: report, problems: problems };
+  return { schema: report, problems: problems, spreadsheet: dbInfo.url };
+}
+
+/**
+ * Finds the database spreadsheet. Order: SPREADSHEET_ID property → the spreadsheet this script is bound to →
+ * (standalone script with neither) create a new spreadsheet and remember its id in Script properties.
+ * Only setup() may create a spreadsheet; normal requests never do (see spreadsheet_ in Db.gs).
+ */
+function ensureSpreadsheet_() {
+  var id = prop_('SPREADSHEET_ID', '');
+  var ss = null;
+  if (id) {
+    try { ss = SpreadsheetApp.openById(id); } catch (e) {
+      throw new ApiError('DB_UNAVAILABLE', 'SPREADSHEET_ID is set but that spreadsheet cannot be opened by this account: ' + e, 500);
+    }
+    return { url: ss.getUrl ? ss.getUrl() : id, created: false };
+  }
+  ss = SpreadsheetApp.getActiveSpreadsheet();
+  if (ss) return { url: ss.getUrl ? ss.getUrl() : '(bound spreadsheet)', created: false };
+  ss = SpreadsheetApp.create('Sapludu database');
+  PropertiesService.getScriptProperties().setProperty('SPREADSHEET_ID', ss.getId());
+  _ssCache = null;
+  _tableCache = {};
+  return { url: ss.getUrl(), created: true };
 }
 
 /** Creates every sheet + header row that is missing; never touches existing data. */

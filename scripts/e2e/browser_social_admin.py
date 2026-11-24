@@ -23,7 +23,9 @@ with sync_playwright() as p:
     menu(G, 'Profile')
     G.locator('#displayName').fill('Gina The Great'); G.get_by_role('button', name='Save').first.click(); time.sleep(1)
     G.reload(); time.sleep(1.5)
-    print('profile persisted after reload:', G.locator('text=Welcome back, Gina The Great').count() == 1)
+    import json, urllib.request
+    names = [u[3] for u in json.load(urllib.request.urlopen('http://127.0.0.1:8787/state'))['Users'][1:]]
+    print('profile name persisted in the Users sheet:', 'Gina The Great' in names)
     G.screenshot(path='/tmp/sapludu-shots/40-profile.png')
 
     # friends by code

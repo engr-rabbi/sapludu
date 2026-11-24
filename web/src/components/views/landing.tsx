@@ -16,6 +16,7 @@ import { sound } from "@/lib/sound";
 import { Button } from "@/components/ui/button";
 import { BrandLogo } from "@/components/views/app-shell";
 import { HeroBoard } from "@/components/game/hero-board";
+import { InstallHeroButton } from "@/components/pwa/pwa-ui";
 import {
   Play,
   Users,
@@ -104,7 +105,7 @@ export function LandingView() {
   return (
     <div className="space-y-10 pb-6 sm:space-y-14">
       {/* ============================== HERO ============================== */}
-      <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-800 via-blue-700 to-emerald-600 px-4 py-8 shadow-2xl sm:px-8 sm:py-12 lg:px-12 lg:py-16">
+      <section className="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-blue-800 via-blue-700 to-emerald-600 px-4 py-5 shadow-2xl sm:px-8 sm:py-12 lg:px-12 lg:py-16">
         {/* decorative winding snakes + ladder — instant Snakes & Ladders identity */}
         <svg
           viewBox="0 0 100 100"
@@ -148,13 +149,14 @@ export function LandingView() {
           <div className="absolute right-[6%] top-14 text-3xl opacity-40">🐍</div>
         </div>
 
-        <div className="relative grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+        <div className="relative grid items-center gap-8 max-sm:gap-y-3 lg:grid-cols-2 lg:gap-12">
           {/* copy + CTAs */}
-          <div className="text-center lg:text-left">
+          {/* on phones (<640px) the children become grid items so the order can change: board right after the CTAs */}
+          <div className="text-center max-sm:contents lg:text-left">
             <motion.span
               initial={{ opacity: 0, y: -8 }}
               animate={{ opacity: 1, y: 0 }}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wide text-amber-200 backdrop-blur"
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wide text-amber-200 backdrop-blur max-sm:order-1 max-sm:justify-self-center"
             >
               <Sparkles className="h-3.5 w-3.5" />
               {t("landing.badge")}
@@ -165,7 +167,7 @@ export function LandingView() {
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.04 }}
-              className="mt-4 inline-flex items-center gap-2.5 rounded-2xl border-2 border-amber-300/70 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400 px-4 py-2 shadow-lg shadow-amber-900/40 sm:px-5 sm:py-2.5"
+              className="mt-4 inline-flex items-center gap-2.5 rounded-2xl border-2 border-amber-300/70 bg-gradient-to-r from-amber-400 via-orange-400 to-amber-400 px-4 py-2 shadow-lg shadow-amber-900/40 max-sm:order-2 max-sm:mt-1 max-sm:justify-self-center sm:px-5 sm:py-2.5"
             >
               <span aria-hidden className="text-2xl leading-none sm:text-3xl">🐍</span>
               <span className="text-xl font-black uppercase tracking-wide text-white drop-shadow-[0_2px_0_rgba(180,83,9,0.8)] sm:text-2xl">
@@ -174,11 +176,15 @@ export function LandingView() {
               <span aria-hidden className="text-2xl leading-none sm:text-3xl">🪜</span>
             </motion.div>
 
+            <div className="max-sm:order-3 sm:hidden">
+              <InstallHeroButton />
+            </div>
+
             <motion.h1
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.08 }}
-              className="mt-4 text-3xl font-black leading-tight text-white drop-shadow-sm sm:text-4xl lg:text-[2.75rem] xl:text-5xl"
+              className="mt-4 text-3xl font-black leading-tight text-white drop-shadow-sm max-sm:order-4 max-sm:mt-1 sm:text-4xl lg:text-[2.75rem] xl:text-5xl"
             >
               {t("landing.hero.title")}
             </motion.h1>
@@ -187,7 +193,7 @@ export function LandingView() {
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.16 }}
-              className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-blue-50/95 sm:text-base lg:mx-0"
+              className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-blue-50/95 max-sm:order-5 max-sm:mt-0 sm:text-base lg:mx-0"
             >
               {t("landing.hero.subtitle")}
             </motion.p>
@@ -196,11 +202,11 @@ export function LandingView() {
               initial={{ y: 16, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.24 }}
-              className="mt-7 flex flex-wrap items-center justify-center gap-3 lg:justify-start"
+              className="mt-7 flex flex-wrap items-center justify-center gap-3 max-sm:order-6 max-sm:mt-1 max-sm:grid max-sm:grid-cols-2 max-sm:gap-2.5 lg:justify-start"
             >
               <Button
                 size="lg"
-                className="h-13 bg-amber-400 px-8 text-base font-black text-amber-950 shadow-lg shadow-amber-900/30 transition hover:bg-amber-300 active:scale-95"
+                className="h-13 bg-amber-400 px-8 text-base font-black max-sm:col-span-2 max-sm:h-12 max-sm:w-full text-amber-950 shadow-lg shadow-amber-900/30 transition hover:bg-amber-300 active:scale-95"
                 onClick={() => go(() => navigate("play"))}
               >
                 <Play className="mr-2 h-5 w-5" />
@@ -208,7 +214,7 @@ export function LandingView() {
               </Button>
               <Button
                 size="lg"
-                className="h-13 bg-emerald-500 px-6 text-base font-bold text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-400 active:scale-95"
+                className="h-13 bg-emerald-500 px-6 text-base font-bold max-sm:h-auto max-sm:min-h-12 max-sm:w-full max-sm:whitespace-normal max-sm:px-3 max-sm:py-2 max-sm:text-sm max-sm:leading-tight text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-400 active:scale-95"
                 onClick={() => go(() => navigate("setup-local"))}
               >
                 <Users className="mr-2 h-5 w-5" />
@@ -216,7 +222,7 @@ export function LandingView() {
               </Button>
               <Button
                 size="lg"
-                className="h-13 bg-violet-500 px-6 text-base font-bold text-white shadow-lg shadow-violet-900/30 transition hover:bg-violet-400 active:scale-95"
+                className="h-13 bg-violet-500 px-6 text-base font-bold max-sm:h-auto max-sm:min-h-12 max-sm:w-full max-sm:whitespace-normal max-sm:px-3 max-sm:py-2 max-sm:text-sm max-sm:leading-tight text-white shadow-lg shadow-violet-900/30 transition hover:bg-violet-400 active:scale-95"
                 onClick={() => go(() => navigate("setup-ai"))}
               >
                 <Bot className="mr-2 h-5 w-5" />
@@ -229,7 +235,7 @@ export function LandingView() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.36 }}
-                className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-blue-100 lg:justify-start"
+                className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm text-blue-100 max-sm:order-8 max-sm:mt-1 lg:justify-start"
               >
                 <button
                   className="font-semibold text-amber-200 underline-offset-2 hover:underline"
@@ -261,7 +267,7 @@ export function LandingView() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.42 }}
-              className="mt-6 flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-blue-100/90 sm:text-xs lg:justify-start"
+              className="mt-6 flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold text-blue-100/90 max-sm:order-9 max-sm:mt-0 sm:text-xs lg:justify-start"
             >
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1.5">
                 <ShieldCheck className="h-3.5 w-3.5 text-emerald-300" /> 100% fair dice
@@ -276,7 +282,7 @@ export function LandingView() {
           </div>
 
           {/* the board itself — the identity */}
-          <div className="relative mx-auto w-full max-w-[430px] lg:max-w-[480px]">
+          <div className="relative mx-auto w-full max-w-[430px] max-sm:order-7 max-sm:mt-7 lg:max-w-[480px]">
             <HeroBoard />
           </div>
         </div>

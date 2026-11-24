@@ -66,21 +66,56 @@ function InstallHelp({ open, onOpenChange }: { open: boolean; onOpenChange: (v: 
   );
 }
 
-/** Prominent top-of-page shortcut. Hidden once the app is installed / running standalone. */
-export function InstallBar() {
-  const t = useT();
+/** False during static prerender / hydration, true afterwards (install state only exists in the browser). */
+function useShowInstall() {
   const installed = usePwaStore((s) => s.installed);
-  const install = useInstallAction();
-  // false during static prerender / hydration, true afterwards (the install state is only known in the browser)
   const mounted = useSyncExternalStore(
     () => () => {},
     () => true,
     () => false,
   );
-  if (!mounted || installed) return null;
+  return mounted && !installed;
+}
+
+/**
+ * Large, high-contrast install button for phones. It lives inside the landing hero, directly above the headline
+ * (phones only — tablets and desktops keep the slim top bar). Hidden once the app is installed.
+ */
+export function InstallHeroButton() {
+  const t = useT();
+  const show = useShowInstall();
+  const install = useInstallAction();
+  if (!show) return null;
   return (
     <>
-      <div className="bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 text-white" data-testid="install-bar">
+      <button
+        type="button"
+        onClick={() => void install.run()}
+        data-testid="install-hero-button"
+        className="group relative mx-auto flex min-h-[58px] w-full max-w-sm items-center justify-center gap-3 rounded-2xl bg-white px-4 py-2.5 text-left shadow-xl shadow-blue-950/40 ring-2 ring-emerald-300 transition active:scale-[0.98] sm:hidden"
+      >
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white shadow-inner">
+          <Smartphone className="h-5 w-5" aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1 text-base font-black leading-tight text-emerald-900">{t("install.button")}</span>
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-amber-400 text-amber-950 motion-safe:animate-pulse">
+          <Download className="h-5 w-5" aria-hidden />
+        </span>
+      </button>
+      <InstallHelp open={install.help} onOpenChange={install.setHelp} />
+    </>
+  );
+}
+
+/** Slim top shortcut for tablets and desktops (phones get the large hero button instead). */
+export function InstallBar() {
+  const t = useT();
+  const show = useShowInstall();
+  const install = useInstallAction();
+  if (!show) return null;
+  return (
+    <>
+      <div className="hidden bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 text-white sm:block" data-testid="install-bar">
         <button
           onClick={() => void install.run()}
           className="mx-auto flex w-full max-w-6xl items-center justify-center gap-2 px-3 py-2 text-sm font-bold transition hover:bg-white/10 active:bg-white/20"
