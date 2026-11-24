@@ -1,0 +1,24 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sapludu real-time multiplayer server (Socket.IO) — authoritative for dice, turns and moves",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "esbuild src/index.ts --bundle --platform=node --target=node20 --format=esm --outfile=dist/index.js --packages=external --alias:@sapludu/engine=../packages/engine/src && echo built dist/index.js",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test --test-force-exit tests/*.test.ts"
+  },
+  "dependencies": {
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "@sapludu/engine": "*",
+    "@types/node": "^22",
+    "esbuild": "^0.25.0",
+    "socket.io-client": "^4.8.4"
+  }
+}

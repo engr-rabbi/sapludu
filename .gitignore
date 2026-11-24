@@ -1,0 +1,33 @@
+# dependencies
+node_modules/
+.pnp*
+
+# build output
+web/out/
+web/.next/
+server/dist/
+*.tsbuildinfo
+next-env.d.ts
+
+# environment & secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+*.pem
+.clasprc.json
+
+# runtime data
+server/data/
+*.log
+npm-debug.log*
+
+# editors / OS
+.DS_Store
+.idea/
+.vscode/
+Thumbs.db
+
+# test artefacts
+coverage/
+playwright-report/
+test-results/

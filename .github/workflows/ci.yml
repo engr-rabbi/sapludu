@@ -1,0 +1,22 @@
+name: CI
+on:
+  push: { branches: [main] }
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - name: Build web (static export, placeholder config)
+        run: npm run build:web
+        env:
+          NEXT_PUBLIC_GOOGLE_CLIENT_ID: ci-placeholder.apps.googleusercontent.com
+          NEXT_PUBLIC_APPS_SCRIPT_URL: https://script.google.com/macros/s/ci/exec
+          NEXT_PUBLIC_GAME_SERVER_URL: https://example.invalid
+      - run: npm run build:server

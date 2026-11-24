@@ -1,0 +1,10 @@
+{
+  "name": "@sapludu/engine",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Pure, deterministic Sapludu (Snakes & Ladders) game engine shared by the web client and the realtime server.",
+  "exports": {
+    "./*": "./src/*.ts"
+  }
+}

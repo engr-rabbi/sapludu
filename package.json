@@ -1,0 +1,26 @@
+{
+  "name": "sapludu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sapludu (Snakes & Ladders) — Google-authenticated, Google-Sheets-backed, real-time multiplayer platform",
+  "engines": { "node": ">=20.9" },
+  "workspaces": ["packages/*", "web", "server"],
+  "scripts": {
+    "dev:web": "npm run dev -w web",
+    "dev:server": "npm run dev -w server",
+    "build": "npm run build -w web && npm run build -w server",
+    "build:web": "npm run build -w web",
+    "build:server": "npm run build -w server",
+    "typecheck": "npm run typecheck -ws --if-present",
+    "lint": "npm run lint -w web",
+    "test": "npm run test:engine && npm run test:apps-script && npm run test:server",
+    "test:engine": "tsx scripts/verify-engine.ts",
+    "test:apps-script": "node --import tsx --test apps-script/tests/backend.test.mjs",
+    "test:server": "npm run test -w server",
+    "mock:stack": "tsx scripts/e2e/stack.mts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

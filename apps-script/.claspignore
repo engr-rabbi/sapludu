@@ -1,0 +1,4 @@
+tests/**
+**/*.mjs
+*.example
+README.md

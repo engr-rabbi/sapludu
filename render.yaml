@@ -1,0 +1,21 @@
+# Render Blueprint — one-click deploy of the real-time game server.
+# https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: sapludu-game-server
+    runtime: node
+    plan: free            # free instances sleep after 15 min idle; use "starter" for always-on play
+    region: singapore     # closest to Bangladesh; change as needed
+    buildCommand: npm ci --workspace=server --workspace=@sapludu/engine --include-workspace-root && npm run build -w server
+    startCommand: node server/dist/index.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: CORS_ORIGINS
+        sync: false       # e.g. https://USERNAME.github.io
+      - key: APPS_SCRIPT_URL
+        sync: false
+      - key: APPS_SCRIPT_SERVER_SECRET
+        sync: false
