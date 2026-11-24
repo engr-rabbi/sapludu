@@ -20,6 +20,13 @@
 * PWA: manifest valid, **Chromium reports no installability errors**, service worker controls the page, caches populated,
   page loads **offline** from cache, install bar hides in standalone mode, install-help dialog shows platform instructions.
 
+### Token-motion probes (`scripts/e2e/token_motion_probe.py`, `token_start_probe.py`)
+Sample every pawn's on-screen position on **every animation frame** during real moves and at game start, then look for the
+"drop from above" signature (pawn appears in the board's top-left corner and travels away from it), height changes during glides and
+per-frame jumps. The detector was validated against the previous build (it flags the bug: 29 frames in 30 rolls; pawns entered from the
+corner at game start) and reports 0 on the fix across desktop/phone viewports, two board themes and a full online game.
+Snake-swallow reappearance and ladder climbs are intentional choreography and are classified separately.
+
 ## What automated tests could NOT cover (verify after deploying)
 These need real accounts/infrastructure — follow README §6:
 

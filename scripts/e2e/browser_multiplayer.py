@@ -55,10 +55,18 @@ with sync_playwright() as p:
     A.screenshot(path=f'{SHOTS}/13-game-desktop.png')
     B.screenshot(path=f'{SHOTS}/14-game-mobile.png')
 
+    # frame-by-frame pawn sampler on both devices: no pawn may ever enter from the board corner (drop from above)
+    SAMPLER = '''() => { window.__s = []; const bd = document.querySelector('[role=img][aria-label*="game board"]');
+      const tick = () => { const b = bd.getBoundingClientRect();
+        document.querySelectorAll('svg[viewBox="0 0 40 44"]').forEach(v => { if (!bd.contains(v)) return;
+          const r = v.getBoundingClientRect(); window.__s.push({f: v.querySelector('path[fill]').getAttribute('fill'),
+            t: performance.now(), x: (r.left + r.width/2 - b.left)/b.width*100, y: (r.bottom - b.top)/b.height*100}); });
+        requestAnimationFrame(tick); }; requestAnimationFrame(tick); }'''
+    A.evaluate(SAMPLER); B.evaluate(SAMPLER)
     rolls = 0
     t0 = time.time()
     shot_mid = False
-    while time.time() - t0 < 150:
+    while time.time() - t0 < 270:
         done = any(pg.locator('[aria-label="Game result"]').count() for pg in (A, B))
         if done: break
         for pg in (A, B):
@@ -77,6 +85,20 @@ with sync_playwright() as p:
     time.sleep(2.5)  # let game:rated arrive
     A.screenshot(path=f'{SHOTS}/17-result-desktop.png'); B.screenshot(path=f'{SHOTS}/18-result-mobile.png')
 
+    for name, pg in (('desktop', A), ('phone', B)):
+        S = pg.evaluate('window.__s'); by = {}
+        for s in S: by.setdefault(s['f'], []).append(s)
+        drops = 0
+        for ser in by.values():
+            for i in range(len(ser) - 1):
+                a, c = ser[i], ser[i + 1]
+                if ((c['x']-a['x'])**2 + (c['y']-a['y'])**2) ** .5 > 20 and c['x'] < 14 and c['y'] < 20 and not (a['x'] < 14 and a['y'] < 20):
+                    later = ser[i + 2:i + 40]
+                    leaves = any(((s['x']-c['x'])**2 + (s['y']-c['y'])**2) ** .5 > 8 for s in later)
+                    if leaves:   # fly-in signature: appears in the corner, then travels away from it
+                        drops += 1
+                        print('   FLY-IN:', name, [(round(s['x'],1), round(s['y'],1)) for s in ser[max(0, i-2):i+8]])
+        print(f'pawn drop-from-above frames on {name}: {drops}  ({len(S)} samples)')
     state = json.load(urllib.request.urlopen('http://127.0.0.1:8787/state'))
     games = state['Games']; users = state['Users']
     print('Games rows', len(games) - 1, '| mode', games[1][2], '| status', games[1][3], '| turns', games[1][8])

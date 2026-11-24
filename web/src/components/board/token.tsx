@@ -171,8 +171,17 @@ export function Token({
   const px = x + dx - size / 2;
   const py = y + dy - size * 0.78;
 
+  // This branch MOUNTS a brand-new element every time the fx sequencer hands the pawn back (end of a move) and when
+  // the board first renders. A freshly mounted absolutely-positioned element has no left/top yet, so without an
+  // explicit `initial` Framer Motion starts from the container's top-left corner and animates down to the square —
+  // the "pawn falls from the sky" glitch. Mounting exactly where the glide ended (the square centre, without the
+  // fan-out offset) means nothing travels in from anywhere; only the tiny stack fan-out offset (if any) eases in.
+  const startX = x - size / 2;
+  const startY = y - size * 0.78;
+
   return (
     <motion.div
+      initial={{ left: `${startX}%`, top: `${startY}%` }}
       animate={{ left: `${px}%`, top: `${py}%` }}
       transition={{ duration: Math.max(glideMs, 120) / 1000, ease: "easeInOut" }}
       className="absolute z-20"

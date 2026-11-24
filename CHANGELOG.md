@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1 — Token drop fix
+- **Fixed the "pawn falls from above" effect.** When a move finished (and when the board first rendered), the pawn was re-created as a new
+  element with no starting position, so Framer Motion animated it in from the board's top-left corner down to its square. The re-created pawn now
+  starts exactly on the square where the glide ended (`web/src/components/board/token.tsx`, `initial` prop). Movement speed, step-by-step glide,
+  square counting, snake/ladder choreography, dice and all rules are untouched.
+
 ## 1.0.0 — Google-powered online platform
 - Replaced e-mail/password + SQLite/Prisma with **Sign in with Google** + **Google Apps Script** + **Google Sheets**.
 - New monorepo: `web` (static export), `server` (Socket.IO), `apps-script`, shared `packages/engine`.
